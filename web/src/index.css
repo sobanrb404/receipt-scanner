@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #1a2332;
+  --color-ink-soft: #4b5567;
+  --color-paper: #eef1f5;
+  --color-paper-raised: #ffffff;
+  --color-line: #c7d0dc;
+  --color-accent: #dd5b25;
+  --color-teal: #2f7a6f;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: "Manrope", system-ui, sans-serif;
+}

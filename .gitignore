@@ -1,0 +1,25 @@
+# The mobile app is its own separate git repo (has its own .git/) —
+# excluded here so this repo doesn't try to nest/swallow it.
+mobile/
+
+# --- Backend (Python) ---
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+backend/uploads/
+backend/*.db
+backend/.pytest_cache/
+backend/.mypy_cache/
+
+# --- Web (Node) ---
+web/node_modules/
+web/dist/
+web/dist-ssr/
+web/*.local
+web/.env
+
+# --- OS / editor ---
+.DS_Store
+*.swp
