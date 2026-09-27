@@ -1,0 +1,40 @@
+# Render Blueprint — deploys the backend API + a free Postgres database
+# with one click: https://dashboard.render.com/blueprints
+#
+# Two env vars need a value you type in yourself during setup (marked
+# `sync: false` below, since real secrets never belong in a file that's
+# public on GitHub): GEMINI_API_KEY and the initial JWT_SECRET_KEY.
+
+services:
+  - name: receipt-scanner-api
+    type: web
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: receipt-scanner-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: UPLOAD_DIR
+        value: /app/uploads
+
+databases:
+  - name: receipt-scanner-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "16"
