@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Smartphone } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ApiError } from "../api/client";
+import { ANDROID_APK_DOWNLOAD_URL } from "../utils/links";
 
 export function Login() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -98,6 +100,14 @@ export function Login() {
             {mode === "login" ? "Sign up" : "Log in"}
           </button>
         </p>
+
+        <a
+          href={ANDROID_APK_DOWNLOAD_URL}
+          className="mt-6 flex items-center justify-center gap-2 border border-[var(--color-line)] rounded-md py-2.5 text-sm font-medium text-[var(--color-ink-soft)] hover:bg-slate-50 hover:text-[var(--color-ink)] transition-colors"
+        >
+          <Smartphone size={16} />
+          Get the Android app (free APK)
+        </a>
       </div>
     </div>
   );

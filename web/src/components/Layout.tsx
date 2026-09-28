@@ -1,5 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
+import { Smartphone } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { ANDROID_APK_DOWNLOAD_URL } from "../utils/links";
 
 const navItems = [
   { to: "/", label: "Dashboard" },
@@ -33,9 +35,16 @@ export function Layout() {
                 {item.label}
               </NavLink>
             ))}
+            <a
+              href={ANDROID_APK_DOWNLOAD_URL}
+              title="Get the Android app (free APK)"
+              className="ml-2 p-1.5 rounded-md text-[var(--color-ink-soft)] hover:bg-slate-100 hover:text-[var(--color-teal)]"
+            >
+              <Smartphone size={18} />
+            </a>
             <button
               onClick={logout}
-              className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-[var(--color-ink-soft)] hover:bg-slate-100"
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--color-ink-soft)] hover:bg-slate-100"
             >
               Log out
             </button>
