@@ -4,6 +4,7 @@ import { Pencil, Trash2, PlusCircle } from "lucide-react";
 import { api, ApiError } from "../api/client";
 import type { Receipt, ReceiptFilters } from "../api/types";
 import { StatusPill } from "../components/StatusPill";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { CategoryBarChart } from "../components/charts/CategoryBarChart";
 import { SpendTrendChart } from "../components/charts/SpendTrendChart";
 import { TopVendorsChart } from "../components/charts/TopVendorsChart";
@@ -86,18 +87,20 @@ export function Dashboard() {
 
   const totalSpend = receipts.reduce((sum, r) => sum + (r.total ?? 0), 0);
   const needsReviewCount = receipts.filter((r) => r.status === "needs_review").length;
+  const pendingDeleteReceipt = receipts.find((r) => r.id === pendingDeleteId) ?? null;
 
-  async function handleDelete(id: string) {
-    setDeletingId(id);
+  async function handleDelete() {
+    if (!pendingDeleteId) return;
+    setDeletingId(pendingDeleteId);
     setError(null);
     try {
-      await api.delete(`/receipts/${id}`);
-      setReceipts((prev) => prev.filter((r) => r.id !== id));
+      await api.delete(`/receipts/${pendingDeleteId}`);
+      setReceipts((prev) => prev.filter((r) => r.id !== pendingDeleteId));
+      setPendingDeleteId(null);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't delete this receipt.");
     } finally {
       setDeletingId(null);
-      setPendingDeleteId(null);
     }
   }
 
@@ -106,47 +109,17 @@ export function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight">Dashboard</h1>
         <div className="flex flex-wrap gap-2">
-          <div className="relative">
-            <button
-              onClick={() => setConfirmingExport(true)}
-              disabled={exporting || receipts.length === 0}
-              className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
-            >
-              {exporting
-                ? "Exporting…"
-                : activePeriod && activePeriod !== "all_time"
-                  ? `Export CSV (${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label})`
-                  : "Export CSV"}
-            </button>
-
-            {confirmingExport && (
-              <div className="absolute z-10 top-full left-0 mt-2 w-64 bg-[var(--color-paper-raised)] border border-[var(--color-line)] rounded-lg shadow-lg p-4">
-                <p className="text-sm text-[var(--color-ink)] mb-1">
-                  Export <span className="font-semibold">{receipts.length}</span>{" "}
-                  {receipts.length === 1 ? "receipt" : "receipts"} to CSV?
-                </p>
-                <p className="text-xs text-[var(--color-ink-soft)] mb-3">
-                  {activePeriod && activePeriod !== "all_time"
-                    ? `Period: ${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label}`
-                    : "Period: All time"}
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleExport}
-                    className="flex-1 bg-[var(--color-ink)] text-white rounded-md py-1.5 text-sm font-medium hover:opacity-90"
-                  >
-                    Export
-                  </button>
-                  <button
-                    onClick={() => setConfirmingExport(false)}
-                    className="flex-1 border border-[var(--color-line)] rounded-md py-1.5 text-sm font-medium hover:bg-slate-50"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setConfirmingExport(true)}
+            disabled={exporting || receipts.length === 0}
+            className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+          >
+            {exporting
+              ? "Exporting…"
+              : activePeriod && activePeriod !== "all_time"
+                ? `Export CSV (${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label})`
+                : "Export CSV"}
+          </button>
           <Link
             to="/manual"
             className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 flex items-center gap-1.5"
@@ -286,43 +259,24 @@ export function Dashboard() {
                     <StatusPill status={r.status} />
                   </td>
                   <td className="px-4 py-3">
-                    {pendingDeleteId === r.id ? (
-                      <div className="flex items-center justify-end gap-2 text-sm">
-                        <span className="text-[var(--color-ink-soft)]">Delete?</span>
-                        <button
-                          onClick={() => handleDelete(r.id)}
-                          disabled={deletingId === r.id}
-                          className="text-red-600 font-medium hover:underline disabled:opacity-50"
-                        >
-                          {deletingId === r.id ? "…" : "Yes"}
-                        </button>
-                        <button
-                          onClick={() => setPendingDeleteId(null)}
-                          className="text-[var(--color-ink-soft)] hover:underline"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-end gap-1">
-                        <Link
-                          to={`/receipts/${r.id}`}
-                          title="Edit"
-                          aria-label="Edit receipt"
-                          className="p-1.5 rounded-md text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] hover:bg-orange-50"
-                        >
-                          <Pencil size={16} />
-                        </Link>
-                        <button
-                          onClick={() => setPendingDeleteId(r.id)}
-                          title="Delete"
-                          aria-label="Delete receipt"
-                          className="p-1.5 rounded-md text-[var(--color-ink-soft)] hover:text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center justify-end gap-1">
+                      <Link
+                        to={`/receipts/${r.id}`}
+                        title="Edit"
+                        aria-label="Edit receipt"
+                        className="p-1.5 rounded-md text-[var(--color-ink-soft)] hover:text-[var(--color-accent)] hover:bg-orange-50"
+                      >
+                        <Pencil size={16} />
+                      </Link>
+                      <button
+                        onClick={() => setPendingDeleteId(r.id)}
+                        title="Delete"
+                        aria-label="Delete receipt"
+                        className="p-1.5 rounded-md text-[var(--color-ink-soft)] hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -330,6 +284,37 @@ export function Dashboard() {
           </table>
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingDeleteId !== null}
+        title="Delete this receipt?"
+        message={
+          pendingDeleteReceipt
+            ? `"${pendingDeleteReceipt.vendor ?? "This receipt"}" (${
+                pendingDeleteReceipt.total != null ? pendingDeleteReceipt.total.toFixed(2) : "—"
+              }) will be permanently removed. This can't be undone.`
+            : undefined
+        }
+        confirmLabel="Delete"
+        tone="danger"
+        loading={deletingId !== null}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDeleteId(null)}
+      />
+
+      <ConfirmDialog
+        open={confirmingExport}
+        title="Export to CSV?"
+        message={`This will download ${receipts.length} ${receipts.length === 1 ? "receipt" : "receipts"} (${
+          activePeriod && activePeriod !== "all_time"
+            ? PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label
+            : "all time"
+        }) as a CSV file.`}
+        confirmLabel="Export"
+        loading={exporting}
+        onConfirm={handleExport}
+        onCancel={() => setConfirmingExport(false)}
+      />
     </div>
   );
 }

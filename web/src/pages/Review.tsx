@@ -4,6 +4,7 @@ import { api, ApiError } from "../api/client";
 import type { Receipt, ReceiptUpdatePayload } from "../api/types";
 import { StatusPill } from "../components/StatusPill";
 import { ProcessingIndicator } from "../components/ProcessingIndicator";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 const CATEGORIES = ["food", "transport", "office", "software", "travel", "utilities", "other"];
 
@@ -215,58 +216,20 @@ export function Review() {
       )}
 
       <div className="flex items-center gap-3 mt-5 flex-wrap">
-        {confirmingSave ? (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[var(--color-ink-soft)]">Save these changes?</span>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-[var(--color-ink)] text-white rounded-md px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50"
-            >
-              {saving ? "Saving…" : "Yes, save"}
-            </button>
-            <button
-              onClick={() => setConfirmingSave(false)}
-              className="text-[var(--color-ink-soft)] rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-100"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={handleSaveClick}
-            disabled={saving}
-            className="bg-[var(--color-ink)] text-white rounded-md px-4 py-2.5 font-medium hover:opacity-90 disabled:opacity-50"
-          >
-            {saving ? "Saving…" : "Confirm & save"}
-          </button>
-        )}
+        <button
+          onClick={handleSaveClick}
+          disabled={saving}
+          className="bg-[var(--color-ink)] text-white rounded-md px-4 py-2.5 font-medium hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Saving…" : "Confirm & save"}
+        </button>
 
-        {confirmingDelete ? (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[var(--color-ink-soft)]">Delete this receipt?</span>
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="text-red-600 rounded-md px-3 py-2 text-sm font-medium hover:bg-red-50 disabled:opacity-50"
-            >
-              {deleting ? "Deleting…" : "Yes, delete"}
-            </button>
-            <button
-              onClick={() => setConfirmingDelete(false)}
-              className="text-[var(--color-ink-soft)] rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-100"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setConfirmingDelete(true)}
-            className="text-red-600 rounded-md px-4 py-2.5 font-medium hover:bg-red-50"
-          >
-            Delete
-          </button>
-        )}
+        <button
+          onClick={() => setConfirmingDelete(true)}
+          className="text-red-600 rounded-md px-4 py-2.5 font-medium hover:bg-red-50"
+        >
+          Delete
+        </button>
 
         <Link
           to="/"
@@ -275,6 +238,29 @@ export function Review() {
           Cancel
         </Link>
       </div>
+
+      <ConfirmDialog
+        open={confirmingSave}
+        title="Save these changes?"
+        message={`You've edited this receipt. Saving will overwrite the previous values for "${
+          receipt.vendor ?? "this receipt"
+        }".`}
+        confirmLabel="Save"
+        loading={saving}
+        onConfirm={handleSave}
+        onCancel={() => setConfirmingSave(false)}
+      />
+
+      <ConfirmDialog
+        open={confirmingDelete}
+        title="Delete this receipt?"
+        message={`"${receipt.vendor ?? "This receipt"}" will be permanently removed. This can't be undone.`}
+        confirmLabel="Delete"
+        tone="danger"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmingDelete(false)}
+      />
     </div>
   );
 }
