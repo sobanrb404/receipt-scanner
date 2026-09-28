@@ -4,7 +4,7 @@
 
 1. Go to https://dashboard.render.com/blueprints
 2. Click **New Blueprint Instance**
-3. Connect the `sobanrb404/receipt-scanner` GitHub repo
+3. Connect the `sobanrb404/smart-receipt-scanner` GitHub repo
 4. Render reads `render.yaml` from the repo root automatically and shows
    you a preview: one web service (`receipt-scanner-api`) + one free
    Postgres database (`receipt-scanner-db`)
