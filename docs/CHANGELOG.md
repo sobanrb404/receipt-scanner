@@ -3,6 +3,24 @@
 Dated log of what was built, in what order, and why. Newest entries at the
 top. See [ROADMAP.md](./ROADMAP.md) for what's planned next.
 
+## 2026-09-28 — "Remember me" on the web login form
+
+A first-time visitor landing on the login screen shouldn't be told
+"Welcome back" (fixed separately), and a returning one should have a say
+in whether their session survives closing the browser.
+
+- `web/src/api/client.ts`: `setToken` now takes a `remember` flag — true
+  stores the JWT in `localStorage` (survives closing the browser, the
+  previous always-on behavior), false stores it in `sessionStorage`
+  (cleared when the tab closes). `getToken` checks session first, falls
+  back to local; `clearToken` clears both.
+- Wired a "Remember me" checkbox into the login form, checked by default
+  so existing behavior doesn't change unless you opt out
+- Verified end-to-end against the local backend: unchecked → token only
+  in `sessionStorage`; checked → token only in `localStorage`
+- Mobile wasn't touched — it already always persists the session via
+  SecureStore, which is normal mobile UX (no browser tab to close)
+
 ## 2026-09-28 — Rebrand to "Smart Receipt Scanner" (mobile)
 
 Brought the mobile app in line with the web rebrand.
