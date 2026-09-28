@@ -57,6 +57,33 @@ cd ~/Documents/workspace/resume/receipt-scanner/mobile
 npx eas-cli build --platform android --profile preview
 ```
 
+## 2026-09-28 — Smart save confirmation + Export CSV confirmation (web + mobile)
+
+Rather than bolt a confirmation dialog onto every action, thought through
+which ones actually need one:
+
+- **Delete** already had inline "Delete this receipt? Yes/Cancel" on
+  every screen (Dashboard rows, Review page, mobile) — no changes needed.
+- **Edit**: confirming *before opening* the edit form adds no value
+  (nothing's changed yet, and Cancel already exists). What's worth
+  confirming is *saving an actual change* — so "Confirm & save" now
+  compares the current form against what was originally loaded from the
+  server. If nothing was actually edited (the common case — accepting
+  the AI's extraction as-is), it saves immediately, no extra click. If a
+  field genuinely differs, it shows "Save these changes? Yes, save /
+  Cancel" first. Implemented identically on both web and mobile.
+- **Export CSV** (web only — mobile has no export feature) now shows a
+  small popover confirming exactly what will be exported (receipt count
+  + the active period filter) before downloading, instead of firing
+  immediately with zero context.
+
+**Verified both scenarios on both apps**: edited nothing → saved
+instantly with no popup; edited the total → got the confirmation prompt,
+confirmed, and the change persisted correctly (checked directly against
+the live database in the mobile case, not just the UI). Export popover
+confirmed showing the right count/period and successfully triggering the
+download.
+
 ## 2026-09-28 — Processing progress indicator + deeper mobile audit (web + mobile app)
 
 **Added**: an animated processing indicator (indeterminate progress bar +
