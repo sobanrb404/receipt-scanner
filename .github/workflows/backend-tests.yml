@@ -31,4 +31,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest -v
+        # `python -m pytest`, not plain `pytest` -- the former adds the cwd
+        # to sys.path, which `from app...` imports in the test files rely
+        # on (there's no installed package or pytest pythonpath config).
+        run: python -m pytest -v
