@@ -23,3 +23,10 @@ web/.env
 # --- OS / editor ---
 .DS_Store
 *.swp
+
+# --- Internal working docs ---
+# Dev-facing notes (changelog, roadmap, deploy/setup steps written as
+# instructions to the project owner) -- useful locally, not meant for
+# a public repo a recruiter or user might land on. Kept on disk, just
+# untracked; see README.md for the public-facing project description.
+docs/
