@@ -3,6 +3,28 @@
 Dated log of what was built, in what order, and why. Newest entries at the
 top. See [ROADMAP.md](./ROADMAP.md) for what's planned next.
 
+## 2026-09-28 — Rebrand to "Smart Receipt Scanner" (mobile)
+
+Brought the mobile app in line with the web rebrand.
+
+- New `Logo` component (`mobile/src/components/Logo.tsx`): same
+  scanning-sweep effect as the web version, built with RN's `Animated`
+  API instead of CSS keyframes, using `@expo/vector-icons`'s
+  `receipt-text-outline` icon
+- Wired it into the sign-in screen next to the (now capitalized) "SMART
+  RECEIPT SCANNER" eyebrow text
+- Updated `app.json`'s `expo.name` to "Smart Receipt Scanner" — this is
+  the name shown under the app icon once installed
+- `expo-doctor` flagged a real gap while doing this: `@expo/vector-icons`
+  needs `expo-font` as a peer dependency, installed via
+  `npx expo install expo-font` (auto-added the config plugin too) — app
+  could have crashed on a real device build without it, even though it
+  worked fine in the web/Expo-Go dev target
+- Verified: `npx tsc --noEmit` clean, `expo-doctor` 21/21, and the
+  sign-in screen checked visually via Expo's web target
+- Committed to `mobile/`'s own git repo (no remote — local only, same as
+  before; EAS Build reads from this commit history)
+
 ## 2026-09-28 — Rebrand to "Smart Receipt Scanner" (web)
 
 Renamed the product from "Receipt Scanner" to "Smart Receipt Scanner"

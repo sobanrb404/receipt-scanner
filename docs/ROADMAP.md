@@ -64,6 +64,13 @@ Status legend: ✅ done · 🔄 in progress · ⏳ not started · 🧍 waiting o
   drag-and-drop upload, full pipeline through to a correctly extracted
   receipt on the review screen
 - ✅ Code pushed to GitHub: https://github.com/sobanrb404/receipt-scanner
+- ✅ Rebrand to "Smart Receipt Scanner" with an animated logo — done on
+  both web and mobile, verified in-browser and via Expo's web target
+- 🧍 **Rename the GitHub repo itself** to `smart-receipt-scanner` — this is
+  a manual step only you can do (Settings → repository name on
+  https://github.com/sobanrb404/receipt-scanner); GitHub redirects the old
+  URL for a while afterward, but let me know once it's done so I can
+  update the local remote and any links in the docs
 - ⏳ Accuracy evaluation on a public dataset (SROIE) — real numbers for your resume
 - ⏳ GitHub Actions CI (tests run on every push)
 - ⏳ Top-level README with architecture diagram + screenshots/GIF
