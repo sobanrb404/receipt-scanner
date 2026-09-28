@@ -57,6 +57,167 @@ cd ~/Documents/workspace/resume/receipt-scanner/mobile
 npx eas-cli build --platform android --profile preview
 ```
 
+## 2026-09-28 — Processing progress indicator + deeper mobile audit (web + mobile app)
+
+**Added**: an animated processing indicator (indeterminate progress bar +
+a status message that advances every 2.5s — "Reading the image…" →
+"Extracting the text…" → "Understanding the details…") on both apps'
+"processing" screen, replacing a bare spinner. There's no real percentage
+to show (OCR + LLM time varies too much to estimate), so this is
+deliberately indeterminate — the point is signaling active progress
+during an unpredictable wait, not a literal number.
+
+**Removed** em-dash-joined sentences across both apps' user-facing text
+(processing screen, low-confidence warning, empty chart states, manual-
+entry subtitle) — replaced with periods/commas, per explicit request.
+
+**Found 2 more real mobile-width bugs** by testing with realistic long/
+large data (a full company name as vendor, a 7-figure total) instead of
+just short demo strings:
+- Stat tile numbers overflowed their card border with a large total —
+  root cause was a CSS grid default (`min-width: auto` on grid items
+  silently defeats text wrapping/truncation) — fixed with `min-w-0` +
+  responsive font size + `break-all` fallback
+- Chart Y-axis labels silently truncated large numbers (`1000000`
+  rendered as just `00000` — the leading digits were clipped, not
+  visible anywhere) — added a shared compact-number formatter (`1.1M`,
+  `700K`) now used on every chart's numeric axis
+- Confirmed (didn't just assume) that Recharts already wraps/contains
+  long category-axis labels — the "International Business..." vendor
+  name wraps onto multiple lines within its allotted space, no fix needed
+
+**Verified**: pushed both repos, confirmed the web deploy is live on
+Vercel.
+
+## 2026-09-28 — Mobile browser responsiveness pass
+
+Tested every page at 375px width (iPhone SE-class, the narrowest common
+size) rather than assuming Tailwind's defaults were enough. Found 2 real
+bugs, confirmed everything else already worked:
+
+- **Header nav**: fixed `h-14` height fought with the title wrapping to
+  2 lines on narrow screens. Fixed with `whitespace-nowrap` + smaller
+  text/padding on mobile (`sm:` breakpoints) so everything fits one line.
+- **Dashboard's 3 action buttons** (Export CSV / Add manually / Upload
+  receipt) overflowed off the right edge of the screen — the last button
+  was literally cut off, unreachable. Fixed with `flex-wrap` so they wrap
+  to a second row instead.
+- Verified **no changes needed** on Login, Upload, Manual entry, Review,
+  or the receipts table (which already had proper `overflow-x-auto`) —
+  confirmed by actually rendering each at mobile width, not assumed.
+
+Pushed and confirmed live on Vercel.
+
+## 2026-09-28 — "Download for Android" button live on the web app
+
+**Added**
+- `web/src/utils/links.ts` — the Android APK download URL, currently
+  pointing at a Google Drive share link
+- A full "Get the Android app (free APK)" button on the **Login page** —
+  visible to anyone who visits the site, no account needed
+- A compact icon version in the top nav bar for logged-in users, on
+  every page
+
+**Verified**: pushed to GitHub, confirmed Vercel auto-redeployed within
+about a minute, and checked the live login page directly — the button is
+there and working, exactly as it was tested locally first.
+
+**Known trade-off, documented not hidden**: Google Drive's direct-download
+link shows Drive's standard "can't scan for viruses" interstitial for
+files over its size threshold (an APK is well over it) — normal Drive
+behavior for anyone, not a bug, but not a one-click download either. If
+that friction matters later, the clean upgrade is hosting the `.apk` as
+a **GitHub Release asset** instead (same cost: free), which gives a
+direct link with no warning page.
+
+## 2026-09-28 — Mobile app repointed at the live backend
+
+**Changed**: `mobile/eas.json` (the `preview` build profile) and
+`mobile/.env` now point `EXPO_PUBLIC_API_BASE_URL` at
+`https://receipt-scanner-api-1ss7.onrender.com` instead of this
+machine's LAN IP. This removes the whole class of bugs from earlier
+(login working in Expo Go but not the built APK, needing to update the
+IP whenever the network changes) — the app now talks to a real,
+stable internet address.
+
+**Committed** (mobile has its own git repo, separate from the main one).
+
+**Waiting on you**: rebuild the APK one more time — this is the one that
+should actually work standalone, with no dependency on your PC being on
+the same network:
+```bash
+cd ~/Documents/workspace/resume/receipt-scanner/mobile
+npx eas-cli build --platform android --profile preview
+```
+Once it finishes, download the `.apk` and back it up to Google Drive
+(EAS's free tier only keeps build artifacts ~30 days) — then send it back
+so it can be hosted for the web app's "Download for Android" button.
+
+## 2026-09-28 — Web deployed to Vercel — full product now live end-to-end
+
+**Live URL**: https://receipt-scanner-ochre-two.vercel.app
+
+**Added**: `web/vercel.json` with an SPA rewrite rule — without it, a page
+refresh on any non-root route (e.g. `/receipts/:id`) would 404 on
+Vercel's static hosting, since it doesn't know to serve `index.html` for
+client-side routes by default.
+
+**Verified for real** — drove the actual deployed site with the browser,
+not just checked it loads:
+- Signed up a real account through the live UI → correctly hit the live
+  Render backend and auto-logged in
+- Dashboard rendered correctly against real (empty) data: stat tiles, all
+  5 chart tabs, period pills, the new From/To labels
+- Generated a test receipt image in-browser (canvas) and dropped it onto
+  the live Upload page — exercised the actual drag-and-drop code path,
+  not a shortcut
+- Watched it go through the full live pipeline: Vercel → Render → Neon
+  Postgres → Gemini API → back to the browser, landing on Review with
+  the correct vendor, date, total (1785), category, and all 3 line items
+- Cleaned up test data from the live database afterward
+
+**The whole product is now live**: web app, backend API, and database
+are all real, deployed, and confirmed working together — not just each
+piece checked in isolation.
+
+## 2026-09-28 — Backend deployed to Render — live and fully verified
+
+**Live URL**: https://receipt-scanner-api-1ss7.onrender.com
+
+**Fixed one real deploy bug**: the first deploy attempt failed with
+`invalid local: resolve : lstat /opt/render/project/src/backend/backend:
+no such file or directory`. Root cause: `dockerfilePath`/`dockerContext`
+in `render.yaml` were written relative to the repo root
+(`backend/Dockerfile`), but with `rootDir: backend` already set, Render
+resolves those two paths *relative to rootDir*, doubling the path.
+Fixed by making them relative to `rootDir` instead (`Dockerfile`, `.`).
+
+**The card issue resolved itself**: Render prompted for a card at some
+point in the flow, but retrying the fixed blueprint on the *existing*
+instance didn't re-trigger it — the database (`receipt-scanner-db`)
+provisioned and the web service deployed without further payment
+friction.
+
+**Verified for real, not just "it's up"**: ran a full API test suite
+directly against the live URL —
+- `GET /health` → 200
+- Signup → 201, login → token issued
+- `POST /receipts/manual` → 201 (confirms the Postgres connection and
+  writes work)
+- `GET /receipts` → 200 (confirms reads work)
+- **Full OCR + Gemini pipeline**: uploaded a real test receipt image to
+  the live API, polled until processing finished, and got back the
+  exact correct vendor, date, total (1785.00), category, and all 3 line
+  items — confirming `GEMINI_API_KEY` was entered correctly during
+  blueprint setup and the whole extraction pipeline works in production,
+  not just locally.
+- Cleaned up all test data from the live database afterward.
+
+**Known limitation from `docs/DEPLOY.md` still applies**: free-tier cold
+starts (~30-60s after 15 min idle), 30-day database expiry, and
+non-persistent uploaded images — none of these block the app from
+working, but worth knowing about.
+
 ## 2026-09-28 — Web: labeled the date range filter (From/To)
 
 **Fixed**: the two date-range inputs on the Dashboard looked identical
