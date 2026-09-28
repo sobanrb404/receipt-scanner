@@ -16,11 +16,19 @@ import json
 import re
 
 import google.generativeai as genai
+from google.api_core.exceptions import GoogleAPIError
 from PIL import Image
 from pydantic import ValidationError
 
 from app.config import settings
 from app.schemas.receipt import ExtractedReceipt
+
+# Bounds each Gemini call so a transient outage (e.g. a 503 "high demand"
+# response) fails fast into our own retry loop below, instead of the SDK's
+# default retry/backoff hanging for minutes and stalling the whole
+# background job. We also disable the SDK's own retry (retry=None) since
+# it would otherwise re-introduce the same long, uncontrolled backoff.
+_REQUEST_OPTIONS = {"timeout": 30, "retry": None}
 
 _PROMPT_TEMPLATE = """You are an expert at reading receipts. Look at the attached
 receipt image carefully and extract the fields below.
@@ -80,11 +88,11 @@ def extract_receipt_fields(image_path: str, ocr_text: str = "") -> ExtractedRece
     last_error: Exception | None = None
     for _ in range(_MAX_ATTEMPTS):
         try:
-            response = model.generate_content([prompt, image])
+            response = model.generate_content([prompt, image], request_options=_REQUEST_OPTIONS)
             raw_json = _strip_code_fences(response.text)
             data = json.loads(raw_json)
             return ExtractedReceipt.model_validate(data)
-        except (json.JSONDecodeError, ValidationError, ValueError) as exc:
+        except (json.JSONDecodeError, ValidationError, ValueError, GoogleAPIError) as exc:
             last_error = exc
             continue
 
