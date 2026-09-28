@@ -4,8 +4,8 @@ import type { AuthResponse } from "../api/types";
 
 interface AuthContextValue {
   isAuthenticated: boolean;
-  login: (email: string, password: string, remember?: boolean) => Promise<void>;
-  signup: (email: string, password: string, remember?: boolean) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -14,16 +14,16 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(getToken()));
 
-  const login = useCallback(async (email: string, password: string, remember = true) => {
+  const login = useCallback(async (email: string, password: string) => {
     const res = await api.post<AuthResponse>("/auth/login", { email, password });
-    setToken(res.access_token, remember);
+    setToken(res.access_token);
     setIsAuthenticated(true);
   }, []);
 
-  const signup = useCallback(async (email: string, password: string, remember = true) => {
+  const signup = useCallback(async (email: string, password: string) => {
     await api.post("/auth/signup", { email, password });
     // Signup doesn't return a token, so log in right after for a smooth flow.
-    await login(email, password, remember);
+    await login(email, password);
   }, [login]);
 
   const logout = useCallback(() => {

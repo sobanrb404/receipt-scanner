@@ -6,26 +6,16 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000
 
 const TOKEN_KEY = "receipt_scanner_token";
 
-// "Remember me" toggles which storage the token lands in: localStorage
-// survives closing the browser, sessionStorage is cleared with the tab.
-// Only one of the two is ever populated at a time.
 export function getToken(): string | null {
-  return sessionStorage.getItem(TOKEN_KEY) ?? localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-export function setToken(token: string, remember: boolean): void {
-  if (remember) {
-    localStorage.setItem(TOKEN_KEY, token);
-    sessionStorage.removeItem(TOKEN_KEY);
-  } else {
-    sessionStorage.setItem(TOKEN_KEY, token);
-    localStorage.removeItem(TOKEN_KEY);
-  }
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 export class ApiError extends Error {

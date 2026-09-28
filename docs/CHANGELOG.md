@@ -3,6 +3,14 @@
 Dated log of what was built, in what order, and why. Newest entries at the
 top. See [ROADMAP.md](./ROADMAP.md) for what's planned next.
 
+## 2026-09-28 — Removed "Remember me"
+
+Reverted the checkbox and the session/localStorage split behind it —
+back to always persisting the token in `localStorage`, as before. The
+autocomplete/`textContentType` attributes added alongside it (so browsers
+offer to save/autofill credentials) were kept on both web and mobile;
+that fix is independent of the removed checkbox.
+
 ## 2026-09-28 — "Remember me" on the web login form
 
 A first-time visitor landing on the login screen shouldn't be told
