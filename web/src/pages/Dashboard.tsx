@@ -30,6 +30,7 @@ export function Dashboard() {
   const [activeTab, setActiveTab] = useState<AnalysisTab>("category");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmingExport, setConfirmingExport] = useState(false);
   // null = a custom range was picked with the date inputs, not a preset.
   const [activePeriod, setActivePeriod] = useState<PeriodKey | null>("all_time");
 
@@ -68,6 +69,7 @@ export function Dashboard() {
 
   async function handleExport() {
     setExporting(true);
+    setConfirmingExport(false);
     try {
       const query = buildFilterQuery();
       const filenameSuffix =
@@ -104,17 +106,47 @@ export function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight">Dashboard</h1>
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleExport}
-            disabled={exporting || receipts.length === 0}
-            className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
-          >
-            {exporting
-              ? "Exporting…"
-              : activePeriod && activePeriod !== "all_time"
-                ? `Export CSV (${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label})`
-                : "Export CSV"}
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setConfirmingExport(true)}
+              disabled={exporting || receipts.length === 0}
+              className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            >
+              {exporting
+                ? "Exporting…"
+                : activePeriod && activePeriod !== "all_time"
+                  ? `Export CSV (${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label})`
+                  : "Export CSV"}
+            </button>
+
+            {confirmingExport && (
+              <div className="absolute z-10 top-full left-0 mt-2 w-64 bg-[var(--color-paper-raised)] border border-[var(--color-line)] rounded-lg shadow-lg p-4">
+                <p className="text-sm text-[var(--color-ink)] mb-1">
+                  Export <span className="font-semibold">{receipts.length}</span>{" "}
+                  {receipts.length === 1 ? "receipt" : "receipts"} to CSV?
+                </p>
+                <p className="text-xs text-[var(--color-ink-soft)] mb-3">
+                  {activePeriod && activePeriod !== "all_time"
+                    ? `Period: ${PERIOD_OPTIONS.find((p) => p.key === activePeriod)?.label}`
+                    : "Period: All time"}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleExport}
+                    className="flex-1 bg-[var(--color-ink)] text-white rounded-md py-1.5 text-sm font-medium hover:opacity-90"
+                  >
+                    Export
+                  </button>
+                  <button
+                    onClick={() => setConfirmingExport(false)}
+                    className="flex-1 border border-[var(--color-line)] rounded-md py-1.5 text-sm font-medium hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
           <Link
             to="/manual"
             className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 flex items-center gap-1.5"

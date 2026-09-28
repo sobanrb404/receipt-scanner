@@ -15,7 +15,13 @@ export function Review() {
   const navigate = useNavigate();
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [form, setForm] = useState<ReceiptUpdatePayload>({});
+  // What the server actually had when the page loaded — compared against
+  // `form` to tell "just accepting the AI's result as-is" apart from "the
+  // user actually changed a field," so we only ask for confirmation when
+  // there's a real edit to confirm.
+  const [originalForm, setOriginalForm] = useState<ReceiptUpdatePayload>({});
   const [saving, setSaving] = useState(false);
+  const [confirmingSave, setConfirmingSave] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,18 +32,24 @@ export function Review() {
     try {
       const data = await api.get<Receipt>(`/receipts/${id}`);
       setReceipt(data);
-      setForm({
+      const loaded: ReceiptUpdatePayload = {
         vendor: data.vendor,
         purchase_date: data.purchase_date,
         total: data.total,
         tax: data.tax,
         currency: data.currency,
         category: data.category,
-      });
+      };
+      setForm(loaded);
+      setOriginalForm(loaded);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't load this receipt.");
     }
   }, [id]);
+
+  const hasEdits = (Object.keys(form) as (keyof ReceiptUpdatePayload)[]).some(
+    (key) => form[key] !== originalForm[key],
+  );
 
   useEffect(() => {
     fetchReceipt();
@@ -54,6 +66,17 @@ export function Review() {
     }
   }, [receipt?.status, fetchReceipt]);
 
+  function handleSaveClick() {
+    // Only interrupt with a confirmation when something was actually
+    // changed — accepting the AI's extraction as-is is the common case
+    // and shouldn't need an extra click.
+    if (hasEdits) {
+      setConfirmingSave(true);
+    } else {
+      handleSave();
+    }
+  }
+
   async function handleSave() {
     if (!id) return;
     setSaving(true);
@@ -64,6 +87,7 @@ export function Review() {
       navigate("/");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Couldn't save changes.");
+      setConfirmingSave(false);
     } finally {
       setSaving(false);
     }
@@ -190,14 +214,33 @@ export function Review() {
         </p>
       )}
 
-      <div className="flex items-center gap-3 mt-5">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-[var(--color-ink)] text-white rounded-md px-4 py-2.5 font-medium hover:opacity-90 disabled:opacity-50"
-        >
-          {saving ? "Saving…" : "Confirm & save"}
-        </button>
+      <div className="flex items-center gap-3 mt-5 flex-wrap">
+        {confirmingSave ? (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[var(--color-ink-soft)]">Save these changes?</span>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-[var(--color-ink)] text-white rounded-md px-3 py-2 text-sm font-medium hover:opacity-90 disabled:opacity-50"
+            >
+              {saving ? "Saving…" : "Yes, save"}
+            </button>
+            <button
+              onClick={() => setConfirmingSave(false)}
+              className="text-[var(--color-ink-soft)] rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-100"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleSaveClick}
+            disabled={saving}
+            className="bg-[var(--color-ink)] text-white rounded-md px-4 py-2.5 font-medium hover:opacity-90 disabled:opacity-50"
+          >
+            {saving ? "Saving…" : "Confirm & save"}
+          </button>
+        )}
 
         {confirmingDelete ? (
           <div className="flex items-center gap-2">
