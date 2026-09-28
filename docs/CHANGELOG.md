@@ -57,6 +57,32 @@ cd ~/Documents/workspace/resume/receipt-scanner/mobile
 npx eas-cli build --platform android --profile preview
 ```
 
+## 2026-09-28 — Replaced inline confirmations with a real modal dialog (web + mobile)
+
+Feedback: the inline "Delete? Yes/Cancel" text-swap style (button text
+replaced by inline confirm text) didn't read as a real confirmation.
+Rebuilt as an actual centered modal — backdrop, card, title, contextual
+message, styled Confirm/Cancel buttons (red for destructive delete) —
+closable with Escape or by clicking the backdrop on web.
+
+**`ConfirmDialog` component** built once per platform (web: a styled
+`<div>` overlay; mobile: React Native's `Modal` component, verified
+against the installed package's actual type definitions rather than
+assumed) and reused for all three confirmable actions:
+- **Delete** — Dashboard rows and Review page (web + mobile), now shows
+  the specific vendor name and amount being deleted
+- **Confirm & save** — still only appears when a field was actually
+  edited (kept from the previous change), now as a modal with the vendor
+  name in the message instead of inline text
+- **Export CSV** (web only) — shows the exact receipt count and active
+  period before downloading
+
+**Verified all 4 dialogs** by actually triggering each one in the
+browser (Dashboard delete, Export, Review save, Review delete on both
+web and mobile) and confirming the underlying action — delete, save,
+export — completed correctly after confirming, not just that the modal
+appeared.
+
 ## 2026-09-28 — Smart save confirmation + Export CSV confirmation (web + mobile)
 
 Rather than bolt a confirmation dialog onto every action, thought through
