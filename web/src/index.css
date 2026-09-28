@@ -8,6 +8,7 @@
   --color-line: #c7d0dc;
   --color-accent: #dd5b25;
   --color-teal: #2f7a6f;
+  --color-teal-soft: #d9ede8;
 }
 
 body {
@@ -36,4 +37,27 @@ body {
 
 .animate-indeterminate {
   animation: indeterminate-bar 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Logo scan-line — a light beam sweeping down over the receipt icon on a
+   loop, echoing what the app actually does (scans a receipt). */
+@keyframes logo-scan {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
+.animate-logo-scan {
+  animation: logo-scan 2.2s ease-in-out infinite;
 }

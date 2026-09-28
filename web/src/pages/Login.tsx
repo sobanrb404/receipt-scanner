@@ -4,6 +4,7 @@ import { Smartphone } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ApiError } from "../api/client";
 import { ANDROID_APK_DOWNLOAD_URL } from "../utils/links";
+import { Logo } from "../components/Logo";
 
 export function Login() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -36,8 +37,11 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center px-5">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="font-mono text-xs uppercase tracking-widest text-[var(--color-teal)] mb-2">
-            Receipt Scanner
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Logo size={26} />
+            <span className="font-mono text-xs uppercase tracking-widest text-[var(--color-teal)]">
+              Smart Receipt Scanner
+            </span>
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight">
             {mode === "login" ? "Welcome back" : "Create your account"}

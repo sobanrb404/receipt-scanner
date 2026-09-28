@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import { Smartphone } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ANDROID_APK_DOWNLOAD_URL } from "../utils/links";
+import { Logo } from "./Logo";
 
 const navItems = [
   { to: "/", label: "Dashboard" },
@@ -15,11 +16,14 @@ export function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-[var(--color-line)] bg-[var(--color-paper-raised)]">
         <div className="max-w-5xl mx-auto px-4 sm:px-5 h-14 flex items-center justify-between gap-2">
-          <Link
-            to="/"
-            className="font-extrabold tracking-tight text-base sm:text-lg whitespace-nowrap shrink-0"
-          >
-            Receipt Scanner
+          <Link to="/" className="flex items-center gap-2 shrink-0 min-w-0">
+            <Logo size={24} />
+            {/* Full name only from small screens up — on a phone-width
+                header, the icon alone carries the brand; the room is
+                needed for the nav items instead. */}
+            <span className="hidden sm:inline font-extrabold tracking-tight text-base sm:text-lg whitespace-nowrap">
+              Smart Receipt Scanner
+            </span>
           </Link>
           <nav className="flex items-center gap-0.5 sm:gap-1 shrink-0">
             {navItems.map((item) => (

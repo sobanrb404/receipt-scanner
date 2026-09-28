@@ -3,6 +3,27 @@
 Dated log of what was built, in what order, and why. Newest entries at the
 top. See [ROADMAP.md](./ROADMAP.md) for what's planned next.
 
+## 2026-09-28 — Rebrand to "Smart Receipt Scanner" (web)
+
+Renamed the product from "Receipt Scanner" to "Smart Receipt Scanner"
+across the web app, and gave it an animated mark instead of plain text.
+
+- New `Logo` component (`web/src/components/Logo.tsx`): a receipt icon in
+  a teal-soft rounded box with a light beam that sweeps down over it on a
+  2.2s loop (`@keyframes logo-scan` in `index.css`) — echoes what the app
+  actually does rather than being an arbitrary decoration
+- Wired the logo + new name into the login screen and the app header
+  (`Layout.tsx`); on the header, the name text stays `hidden sm:inline`
+  (logo-only at phone width) to preserve the earlier mobile-overflow fix,
+  since "Smart Receipt Scanner" is longer than the old name
+- Updated the page `<title>` in `index.html`
+- Verified: `npx tsc -b` clean, and the login screen checked visually at
+  both desktop and 375px mobile width in-browser
+- Mobile app (`mobile/`) rebrand — `app.json`'s display name, the sign-in
+  screen text, and a matching animated logo — still pending
+- GitHub repo itself is still named `receipt-scanner`; renaming it is a
+  manual step in GitHub's own Settings UI, not something doable from here
+
 ## 2026-09-28 — Real root cause of the login failure: API URL missing from cloud builds
 
 **After the commit fix, still the exact same login error.** Checked further

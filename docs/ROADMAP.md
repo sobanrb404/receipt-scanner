@@ -54,14 +54,22 @@ Status legend: ✅ done · 🔄 in progress · ⏳ not started · 🧍 waiting o
   itself
 
 ## Phase 4 — Polish for the resume
-**Status: ⏳ not started**
+**Status: 🔄 in progress**
 
-- Deploy backend (Render or Fly.io free tier)
-- Deploy web app (Vercel)
-- Accuracy evaluation on a public dataset (SROIE) — real numbers for your resume
-- GitHub Actions CI (tests run on every push)
-- Top-level README with architecture diagram + screenshots/GIF
-- Resume bullet points, written from the finished project
+- ✅ **Backend deployed and live**: https://receipt-scanner-api-1ss7.onrender.com
+  — verified end-to-end against the real URL (signup, login, DB read/write,
+  and the full OCR+Gemini pipeline on a real uploaded image)
+- ✅ **Web app deployed and live**: https://receipt-scanner-ochre-two.vercel.app
+  — verified by actually driving the deployed site: signup, dashboard,
+  drag-and-drop upload, full pipeline through to a correctly extracted
+  receipt on the review screen
+- ✅ Code pushed to GitHub: https://github.com/sobanrb404/receipt-scanner
+- ⏳ Accuracy evaluation on a public dataset (SROIE) — real numbers for your resume
+- ⏳ GitHub Actions CI (tests run on every push)
+- ⏳ Top-level README with architecture diagram + screenshots/GIF
+- ⏳ Resume bullet points, written from the finished project
+- ⏳ Rebuild the mobile APK pointed at the live URL (removes the LAN-IP
+  problem entirely), then wire up the web "Download for Android" button
 
 ---
 
