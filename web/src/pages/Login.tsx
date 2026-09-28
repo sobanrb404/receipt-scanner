@@ -44,7 +44,7 @@ export function Login() {
             </span>
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight">
-            {mode === "login" ? "Welcome back" : "Create your account"}
+            {mode === "login" ? "Sign in to continue" : "Create your account"}
           </h1>
         </div>
 
