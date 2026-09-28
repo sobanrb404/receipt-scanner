@@ -1,5 +1,8 @@
 # Smart Receipt Scanner
 
+[![Backend tests](https://github.com/sobanrb404/smart-receipt-scanner/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/sobanrb404/smart-receipt-scanner/actions/workflows/backend-tests.yml)
+[![Web build](https://github.com/sobanrb404/smart-receipt-scanner/actions/workflows/web-build.yml/badge.svg)](https://github.com/sobanrb404/smart-receipt-scanner/actions/workflows/web-build.yml)
+
 Snap or upload a photo of a receipt and get back structured, searchable
 expense data — vendor, date, total, tax, category, line items — extracted
 automatically with OCR + an LLM vision model. Web app, mobile app, and API,
