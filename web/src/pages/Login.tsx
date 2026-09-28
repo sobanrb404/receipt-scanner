@@ -57,6 +57,9 @@ export function Login() {
             <span className="font-medium text-[var(--color-ink-soft)]">Email</span>
             <input
               type="email"
+              name="email"
+              id="email"
+              autoComplete="username"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -69,6 +72,9 @@ export function Login() {
             <span className="font-medium text-[var(--color-ink-soft)]">Password</span>
             <input
               type="password"
+              name="password"
+              id="password"
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
               required
               minLength={8}
               value={password}
