@@ -11,8 +11,8 @@ services:
     runtime: docker
     plan: free
     rootDir: backend
-    dockerfilePath: backend/Dockerfile
-    dockerContext: backend
+    dockerfilePath: Dockerfile
+    dockerContext: .
     region: oregon
     healthCheckPath: /health
     envVars:
