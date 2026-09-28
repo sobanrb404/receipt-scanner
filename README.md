@@ -110,13 +110,6 @@ flowchart LR
 Full interactive docs (Swagger UI) at
 [`/docs`](https://receipt-scanner-api-1ss7.onrender.com/docs) on the live API.
 
-## Accuracy
-
-Field-extraction accuracy is evaluated against the public
-[SROIE](https://github.com/zzzDavid/ICDAR-2019-SROIE) receipt dataset
-(vendor, date, and total fields) — see [`backend/eval/`](backend/eval/) for
-the evaluation script and methodology.
-
 ## Running it locally
 
 Requires Docker and a free [Gemini API key](https://aistudio.google.com/app/apikey).
