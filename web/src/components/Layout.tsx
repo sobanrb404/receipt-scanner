@@ -14,18 +14,21 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-[var(--color-line)] bg-[var(--color-paper-raised)]">
-        <div className="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-          <Link to="/" className="font-extrabold tracking-tight text-lg">
+        <div className="max-w-5xl mx-auto px-4 sm:px-5 h-14 flex items-center justify-between gap-2">
+          <Link
+            to="/"
+            className="font-extrabold tracking-tight text-base sm:text-lg whitespace-nowrap shrink-0"
+          >
             Receipt Scanner
           </Link>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-0.5 sm:gap-1 shrink-0">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.to === "/"}
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  `px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                     isActive
                       ? "bg-[var(--color-ink)] text-white"
                       : "text-[var(--color-ink-soft)] hover:bg-slate-100"
@@ -38,20 +41,20 @@ export function Layout() {
             <a
               href={ANDROID_APK_DOWNLOAD_URL}
               title="Get the Android app (free APK)"
-              className="ml-2 p-1.5 rounded-md text-[var(--color-ink-soft)] hover:bg-slate-100 hover:text-[var(--color-teal)]"
+              className="ml-1 sm:ml-2 p-1.5 rounded-md text-[var(--color-ink-soft)] hover:bg-slate-100 hover:text-[var(--color-teal)]"
             >
               <Smartphone size={18} />
             </a>
             <button
               onClick={logout}
-              className="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--color-ink-soft)] hover:bg-slate-100"
+              className="px-2 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap text-[var(--color-ink-soft)] hover:bg-slate-100"
             >
               Log out
             </button>
           </nav>
         </div>
       </header>
-      <main className="flex-1 max-w-5xl w-full mx-auto px-5 py-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-5 py-6 sm:py-8">
         <Outlet />
       </main>
     </div>

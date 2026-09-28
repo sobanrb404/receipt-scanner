@@ -101,13 +101,13 @@ export function Dashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight">Dashboard</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={handleExport}
             disabled={exporting || receipts.length === 0}
-            className="border border-[var(--color-line)] rounded-md px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
           >
             {exporting
               ? "Exporting…"
@@ -117,14 +117,14 @@ export function Dashboard() {
           </button>
           <Link
             to="/manual"
-            className="border border-[var(--color-line)] rounded-md px-4 py-2 text-sm font-medium hover:bg-slate-50 flex items-center gap-1.5"
+            className="border border-[var(--color-line)] rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:bg-slate-50 flex items-center gap-1.5"
           >
             <PlusCircle size={16} />
             Add manually
           </Link>
           <Link
             to="/upload"
-            className="bg-[var(--color-ink)] text-white rounded-md px-4 py-2 text-sm font-medium hover:opacity-90"
+            className="bg-[var(--color-ink)] text-white rounded-md px-3 sm:px-4 py-2 text-sm font-medium hover:opacity-90"
           >
             Upload receipt
           </Link>
