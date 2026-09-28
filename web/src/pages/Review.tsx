@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, ApiError } from "../api/client";
 import type { Receipt, ReceiptUpdatePayload } from "../api/types";
 import { StatusPill } from "../components/StatusPill";
+import { ProcessingIndicator } from "../components/ProcessingIndicator";
 
 const CATEGORIES = ["food", "transport", "office", "software", "travel", "utilities", "other"];
 
@@ -90,11 +91,12 @@ export function Review() {
 
   if (receipt.status === "processing") {
     return (
-      <div className="max-w-md mx-auto text-center py-16">
+      <div className="max-w-md mx-auto text-center py-16 px-4">
         <StatusPill status="processing" />
-        <p className="mt-4 text-[var(--color-ink-soft)]">
-          Reading your receipt — this usually takes a few seconds.
+        <p className="mt-4 mb-6 text-[var(--color-ink-soft)]">
+          Reading your receipt. This usually takes a few seconds.
         </p>
+        <ProcessingIndicator />
       </div>
     );
   }
@@ -111,7 +113,7 @@ export function Review() {
 
       {receipt.status === "needs_review" && (
         <p className="text-sm bg-amber-50 border border-amber-200 text-amber-800 rounded-md px-3 py-2 mb-5">
-          Some fields had low confidence — double-check the highlighted ones below.
+          Some fields had low confidence. Double-check the highlighted ones below.
         </p>
       )}
 

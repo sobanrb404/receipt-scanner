@@ -304,9 +304,17 @@ export function Dashboard() {
 
 function StatTile({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="bg-[var(--color-paper-raised)] border border-[var(--color-line)] rounded-lg p-4">
+    // min-w-0 matters here: a grid item's default min-width is "auto" (its
+    // content's natural size), which silently overrides text truncation/
+    // wrapping and lets a long number push past the card's border instead
+    // of shrinking or wrapping inside it.
+    <div className="bg-[var(--color-paper-raised)] border border-[var(--color-line)] rounded-lg p-4 min-w-0">
       <p className="text-xs font-mono uppercase tracking-wide text-[var(--color-ink-soft)] mb-1">{label}</p>
-      <p className={`text-2xl font-extrabold tabular-nums ${accent ? "text-amber-600" : ""}`}>{value}</p>
+      <p
+        className={`text-xl sm:text-2xl font-extrabold tabular-nums break-all ${accent ? "text-amber-600" : ""}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

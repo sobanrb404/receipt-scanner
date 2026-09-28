@@ -41,7 +41,7 @@ export function ManualReceipt() {
     <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-extrabold tracking-tight mb-1">Add a receipt manually</h1>
       <p className="text-[var(--color-ink-soft)] mb-6">
-        For a cash purchase or a receipt you don't have a photo of. Saved right away — no scanning needed.
+        For a cash purchase or a receipt you don't have a photo of. Saved right away, no scanning needed.
       </p>
 
       <form

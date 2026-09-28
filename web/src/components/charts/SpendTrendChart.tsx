@@ -1,12 +1,12 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import type { Receipt } from "../../api/types";
-import { spendByDay, formatCurrency, TOOLTIP_STYLE, EmptyChartState } from "./shared";
+import { spendByDay, formatCurrency, formatCompact, TOOLTIP_STYLE, EmptyChartState } from "./shared";
 
 export function SpendTrendChart({ receipts }: { receipts: Receipt[] }) {
   const data = spendByDay(receipts);
 
   if (data.length === 0) {
-    return <EmptyChartState message="No dated receipts yet — spend will chart here once you have some." />;
+    return <EmptyChartState message="No dated receipts yet. Spend will chart here once you have some." />;
   }
 
   return (
@@ -31,6 +31,7 @@ export function SpendTrendChart({ receipts }: { receipts: Receipt[] }) {
           axisLine={false}
           tickLine={false}
           width={44}
+          tickFormatter={formatCompact}
         />
         <Tooltip
           formatter={(value) => (typeof value === "number" ? formatCurrency(value) : value)}

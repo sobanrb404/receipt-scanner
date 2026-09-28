@@ -6,7 +6,7 @@ export function CategoryDonutChart({ receipts }: { receipts: Receipt[] }) {
   const data = spendByCategory(receipts);
 
   if (data.length === 0) {
-    return <EmptyChartState message="No spending data yet — upload a receipt to see it here." />;
+    return <EmptyChartState message="No spending data yet. Upload a receipt to see it here." />;
   }
 
   return (

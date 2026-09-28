@@ -1,12 +1,18 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import type { Receipt } from "../../api/types";
-import { topVendors, formatCurrency, TOOLTIP_STYLE, EmptyChartState, CHART_PALETTE } from "./shared";
+import { topVendors, formatCurrency, formatCompact, TOOLTIP_STYLE, EmptyChartState, CHART_PALETTE } from "./shared";
+
+/** Long vendor names (e.g. a full company name) would otherwise overflow
+ * the fixed-width category axis and run into the chart area. */
+function truncateLabel(label: string, max = 14): string {
+  return label.length > max ? `${label.slice(0, max - 1)}…` : label;
+}
 
 export function TopVendorsChart({ receipts }: { receipts: Receipt[] }) {
   const data = topVendors(receipts, 5);
 
   if (data.length === 0) {
-    return <EmptyChartState message="No vendors yet — they'll rank here once you've uploaded a few receipts." />;
+    return <EmptyChartState message="No vendors yet. They'll rank here once you've uploaded a few receipts." />;
   }
 
   return (
@@ -22,6 +28,7 @@ export function TopVendorsChart({ receipts }: { receipts: Receipt[] }) {
           tick={{ fontSize: 12, fill: "var(--color-ink-soft)" }}
           axisLine={{ stroke: "var(--color-line)" }}
           tickLine={false}
+          tickFormatter={formatCompact}
         />
         <YAxis
           type="category"
@@ -30,6 +37,7 @@ export function TopVendorsChart({ receipts }: { receipts: Receipt[] }) {
           axisLine={false}
           tickLine={false}
           width={110}
+          tickFormatter={truncateLabel}
         />
         <Tooltip
           formatter={(value) => (typeof value === "number" ? formatCurrency(value) : value)}

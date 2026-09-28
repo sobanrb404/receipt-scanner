@@ -23,6 +23,17 @@ export function formatCurrency(value: number): string {
   return value.toFixed(2);
 }
 
+/** Compact axis labels ("1.25M", "50K") — full precision still shows in the
+ * tooltip on hover. Without this, a fixed-width axis silently truncates
+ * large numbers (e.g. "1000000" got clipped to just "00000"). */
+const compactFormatter = new Intl.NumberFormat(undefined, {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+export function formatCompact(value: number): string {
+  return compactFormatter.format(value);
+}
+
 /** Groups receipts by day (YYYY-MM-DD), summing totals, sorted chronologically. */
 export function spendByDay(receipts: Receipt[]): { date: string; total: number }[] {
   const byDay = new Map<string, number>();

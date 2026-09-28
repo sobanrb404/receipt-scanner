@@ -1,12 +1,12 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import type { Receipt } from "../../api/types";
-import { spendByCategory, formatCurrency, TOOLTIP_STYLE, EmptyChartState } from "./shared";
+import { spendByCategory, formatCurrency, formatCompact, TOOLTIP_STYLE, EmptyChartState } from "./shared";
 
 export function CategoryBarChart({ receipts }: { receipts: Receipt[] }) {
   const data = spendByCategory(receipts);
 
   if (data.length === 0) {
-    return <EmptyChartState message="No spending data yet — upload a receipt to see it here." />;
+    return <EmptyChartState message="No spending data yet. Upload a receipt to see it here." />;
   }
 
   return (
@@ -24,6 +24,7 @@ export function CategoryBarChart({ receipts }: { receipts: Receipt[] }) {
           axisLine={false}
           tickLine={false}
           width={44}
+          tickFormatter={formatCompact}
         />
         <Tooltip
           formatter={(value) => (typeof value === "number" ? formatCurrency(value) : value)}

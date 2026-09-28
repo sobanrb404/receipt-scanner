@@ -1,13 +1,13 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import type { Receipt } from "../../api/types";
-import { monthComparison, formatCurrency, TOOLTIP_STYLE, EmptyChartState, CHART_PALETTE } from "./shared";
+import { monthComparison, formatCurrency, formatCompact, TOOLTIP_STYLE, EmptyChartState, CHART_PALETTE } from "./shared";
 
 export function MonthlyComparisonChart({ receipts }: { receipts: Receipt[] }) {
   const { thisMonthLabel, lastMonthLabel, thisMonthTotal, lastMonthTotal } = monthComparison(receipts);
 
   if (thisMonthTotal === 0 && lastMonthTotal === 0) {
     return (
-      <EmptyChartState message="No receipts dated this month or last — they'll compare here once you have some." />
+      <EmptyChartState message="No receipts dated this month or last. They'll compare here once you have some." />
     );
   }
 
@@ -38,6 +38,7 @@ export function MonthlyComparisonChart({ receipts }: { receipts: Receipt[] }) {
             axisLine={false}
             tickLine={false}
             width={44}
+            tickFormatter={formatCompact}
           />
           <Tooltip
             formatter={(value) => (typeof value === "number" ? formatCurrency(value) : value)}

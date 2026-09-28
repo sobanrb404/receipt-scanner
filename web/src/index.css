@@ -16,3 +16,24 @@ body {
   color: var(--color-ink);
   font-family: "Manrope", system-ui, sans-serif;
 }
+
+/* Indeterminate progress bar — used while we're waiting on something with
+   no real percentage to report (OCR + LLM extraction time varies a lot). */
+@keyframes indeterminate-bar {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -35%;
+  }
+  100% {
+    left: 100%;
+    right: -35%;
+  }
+}
+
+.animate-indeterminate {
+  animation: indeterminate-bar 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
